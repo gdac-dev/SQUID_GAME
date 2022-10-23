@@ -49,12 +49,12 @@ class Doll {
     lookBackward() {
         gsap.to(this.doll.rotation, {y: -3.15, duration: 0.5})
 
-        setTimeout(() => isLookingBackward = true, 450)
+        setTimeout(() => isLookingBackward = true, 150)
     }
 
     lookForward() {
         gsap.to(this.doll.rotation, {y: 0, duration: 0.5})
-        setTimeout(() => isLookingBackward = false, 150)
+        setTimeout(() => isLookingBackward = false, 450)
     }
 
     async start() {
@@ -106,15 +106,17 @@ class Player {
     }
 
     stop() {
-        gsap.to(this.playerInfo, {velocity: 0, duration: 0.15})
+        gsap.to(this.playerInfo, {velocity: 0, duration: 0.1})
     }
 
     check() {
         if(this.playerInfo.velocity > 0 && !isLookingBackward) {
-            alert("You lost !")
+            text.innerText = "You lose !"
+            gameStat = "over"
         }
         if (this.playerInfo.positionX < end_position) {
-            alert("You Won !")
+            text.innerText = "You won !"
+            gameStat = "over"
         }
     }
 
@@ -146,11 +148,18 @@ function startGame() {
     progressBar.position.y = 3.35
     gsap.to(progressBar.scale, { x: 0, duration: TIME_LIMIT, ease: "none"})
     doll.start()
+    setTimeout(() => {
+        if(gameStat != "over"){
+            text.innerText = "You ran out of time"
+            gameStat = "over"
+        }
+    }, TIME_LIMIT * 1000)
 }
 
 init()
 
 function animate() {
+    if(gameStat == "over") return
 	requestAnimationFrame( animate );
     renderer.render( scene, camera );
     player.update();
